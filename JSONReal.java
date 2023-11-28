@@ -73,7 +73,7 @@ public class JSONReal {
    * Write the value as JSON.
    */
   public void writeJSON(PrintWriter pen) {
-                        // STUB
+    pen.println(this.value.toString());
   } // writeJSON(PrintWriter)
 
   /**

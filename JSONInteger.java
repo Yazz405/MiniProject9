@@ -55,7 +55,9 @@ public class JSONInteger {
    * Compare to another object.
    */
   public boolean equals(Object other) {
-    return true;        // STUB
+    return ( ( (other instanceof JSONInteger) 
+               && (this.value == ((JSONInteger) other).value) )
+             || (this.value == other) );
   } // equals(Object)
 
   /**

@@ -33,7 +33,7 @@ public class JSONString {
    * Convert to a string (e.g., for printing).
    */
   public String toString() {
-    return "";          // STUB
+    return this.value;          // STUB
   } // toString()
 
   /**
@@ -58,7 +58,7 @@ public class JSONString {
    * Write the value as JSON.
    */
   public void writeJSON(PrintWriter pen) {
-                        // STUB
+    pen.println("\"" + this.value + "\"");
   } // writeJSON(PrintWriter)
 
   /**
