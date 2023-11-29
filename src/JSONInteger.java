@@ -1,44 +1,45 @@
+package src;
 import java.io.PrintWriter;
-import java.math.BigDecimal;
+import java.math.BigInteger;
 
 /**
- * JSON reals.
+ * JSON integers.
  */
-public class JSONReal implements JSONValue{
+public class JSONInteger implements JSONValue{
 
   // +--------+------------------------------------------------------
   // | Fields |
   // +--------+
 
   /**
-   * The underlying double.
+   * The underlying integer.
    */
-  BigDecimal value;
+  BigInteger value;
 
   // +--------------+------------------------------------------------
   // | Constructors |
   // +--------------+
 
   /**
-   * Create a new real given the underlying string.
+   * Create a new integer given the underlying string.
    */
-  public JSONReal(String str) {
-    this.value = new BigDecimal(str);
-  } // JSONReal(String)
+  public JSONInteger(String str) {
+    this.value = new BigInteger(str);
+  } // JSONInteger(String)
 
   /**
-   * Create a new real given a BigDecimal.
+   * Create a new integer given a BigInteger.
    */
-  public JSONReal(BigDecimal value) {
+  public JSONInteger(BigInteger value) {
     this.value = value;
-  } // JSONReal(BigDecimal)
+  } // JSONInteger(BigInteger)
 
   /**
-   * Create a new real given a double.
+   * Create a new integer given an integer or long.
    */
-  public JSONReal(double d) {
-    this.value = BigDecimal.valueOf(d);
-  } // JSONReal(double)
+  public JSONInteger(long l) {
+    this.value = BigInteger.valueOf(l);
+  } // JSONInteger(long)
 
   // +-------------------------+-------------------------------------
   // | Standard object methods |
@@ -55,8 +56,8 @@ public class JSONReal implements JSONValue{
    * Compare to another object.
    */
   public boolean equals(Object other) {
-    return ( ( (other instanceof JSONReal) 
-               && (this.value.equals(((JSONReal) other).value)) )
+    return ( ( (other instanceof JSONInteger) 
+               && (this.value.equals(((JSONInteger) other).value)) )
              || (this.value.equals(other)) );
   } // equals(Object)
 
@@ -75,14 +76,14 @@ public class JSONReal implements JSONValue{
    * Write the value as JSON.
    */
   public void writeJSON(PrintWriter pen) {
-    pen.println(this.value.toString());
+    pen.println(this.toString());
   } // writeJSON(PrintWriter)
 
   /**
    * Get the underlying value.
    */
-  public BigDecimal getValue() {
+  public BigInteger getValue() {
     return this.value;
   } // getValue()
 
-} // class JSONReal
+} // class JSONInteger

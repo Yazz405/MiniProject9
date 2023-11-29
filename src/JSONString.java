@@ -1,44 +1,30 @@
+package src;
 import java.io.PrintWriter;
-import java.math.BigInteger;
 
 /**
- * JSON integers.
+ * JSON strings.
  */
-public class JSONInteger implements JSONValue{
+public class JSONString implements JSONValue{
 
   // +--------+------------------------------------------------------
   // | Fields |
   // +--------+
 
   /**
-   * The underlying integer.
+   * The underlying string.
    */
-  BigInteger value;
+  String value;
 
   // +--------------+------------------------------------------------
   // | Constructors |
   // +--------------+
 
   /**
-   * Create a new integer given the underlying string.
+   * Build a new JSON string for a particular string.
    */
-  public JSONInteger(String str) {
-    this.value = new BigInteger(str);
-  } // JSONInteger(String)
-
-  /**
-   * Create a new integer given a BigInteger.
-   */
-  public JSONInteger(BigInteger value) {
+  public JSONString(String value) {
     this.value = value;
-  } // JSONInteger(BigInteger)
-
-  /**
-   * Create a new integer given an integer or long.
-   */
-  public JSONInteger(long l) {
-    this.value = BigInteger.valueOf(l);
-  } // JSONInteger(long)
+  } // JSONString(String)
 
   // +-------------------------+-------------------------------------
   // | Standard object methods |
@@ -48,15 +34,15 @@ public class JSONInteger implements JSONValue{
    * Convert to a string (e.g., for printing).
    */
   public String toString() {
-    return this.value.toString();
+    return "\"" + this.value + "\"";
   } // toString()
 
   /**
    * Compare to another object.
    */
   public boolean equals(Object other) {
-    return ( ( (other instanceof JSONInteger) 
-               && (this.value.equals(((JSONInteger) other).value)) )
+    return ( ( (other instanceof JSONString) 
+               && (this.value.equals(((JSONString) other).value)) )
              || (this.value.equals(other)) );
   } // equals(Object)
 
@@ -81,8 +67,8 @@ public class JSONInteger implements JSONValue{
   /**
    * Get the underlying value.
    */
-  public BigInteger getValue() {
+  public String getValue() {
     return this.value;
   } // getValue()
 
-} // class JSONInteger
+} // class JSONString
