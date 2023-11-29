@@ -1,4 +1,5 @@
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -56,13 +57,16 @@ public class JSONHash implements JSONValue {
    * Convert to a string (e.g., for printing).
    */
   public String toString() {
-    return ""; // STUB
+    String result = "";
+
+    return "{" + result + "}"; // STUB
   } // toString()
 
   /**
    * Compare to another object.
    */
   public boolean equals(Object other) {
+
     return true; // STUB
   } // equals(Object)
 
@@ -70,7 +74,7 @@ public class JSONHash implements JSONValue {
    * Compute the hash code.
    */
   public int hashCode() {
-    return 0; // STUB
+    return this.buckets.hashCode();
   } // hashCode()
 
   // +--------------------+------------------------------------------
@@ -99,28 +103,115 @@ public class JSONHash implements JSONValue {
    * Get the value associated with a key.
    */
   public JSONValue get(JSONString key) {
-    return null; // STUB
+    int index = find(key);
+
+    @SuppressWarnings("unchecked")
+    ArrayList<KVPair<JSONString, JSONValue>> alist = (ArrayList<KVPair<JSONString, JSONValue>>) buckets[index];
+    if (alist == null) {
+      throw new IndexOutOfBoundsException("Invalid key: " + key);
+    } else {
+      KVPair<JSONString, JSONValue> pair = null;
+
+      for (KVPair<JSONString, JSONValue> currentPair : alist) {
+        if (currentPair.key().equals(key)) {
+          pair = currentPair;
+        } // if
+      } // for
+
+      if (pair == null) {
+        throw new IndexOutOfBoundsException("Invalid key: " + key);
+      } else {
+        return pair.value();
+      } // if-else
+    } // if-else
   } // get(JSONString)
 
   /**
    * Get all of the key/value pairs.
    */
   public Iterator<KVPair<JSONString, JSONValue>> iterator() {
-    return null; // STUB
+    return new Iterator<KVPair<JSONString, JSONValue>>() {
+      public boolean hasNext() {
+        // STUB
+        return false;
+      } // hasNext()
+
+      public KVPair<JSONString, JSONValue> next() {
+        // STUB
+        return null;
+      } // next()
+    }; // new Iterator
   } // iterator()
 
   /**
    * Set the value associated with a key.
    */
   public void set(JSONString key, JSONValue value) {
-    // STUB
+    // if there are too many entries
+    if (this.size > (this.buckets.length * LOAD_FACTOR)) {
+      expand();
+    }
+
+    // Find out where the key belongs and put the pair there.
+    int index = find(key);
+    @SuppressWarnings("unchecked")
+    ArrayList<KVPair<JSONString, JSONValue>> alist = (ArrayList<KVPair<JSONString, JSONValue>>) buckets[index];
+    // Special case: Nothing there yet
+    if (alist == null) {
+      alist = new ArrayList<KVPair<JSONString, JSONValue>>();
+      this.buckets[index] = alist;
+    } // if
+
+    // if the value already exists
+    if (this.containsKey(key)) {
+      for (KVPair<JSONString, JSONValue> pair : alist) {
+        if (pair.key().equals(key)) {
+          pair.set(value);
+        } // if
+      } // for
+    } else {
+      alist.add(new KVPair<JSONString, JSONValue>(key, value));
+      ++this.size;
+    } // if-else
+
   } // set(JSONString, JSONValue)
 
   /**
    * Find out how many key/value pairs are in the hash table.
    */
   public int size() {
-    return 0; // STUB
+    return this.size;
   } // size()
+
+  // +---------+---------------------------------------------------------
+  // | Helpers |
+  // +---------+
+
+  /**
+   * Expand the size of the table.
+   */
+  void expand() {
+
+  }// expand()
+
+  /**
+   * Find the index of the entry with a given key. If there is no such entry,
+   * return the index of an entry we can use to store that key.
+   */
+  int find(JSONString key) {
+    return Math.abs(key.hashCode()) % this.buckets.length;
+  } // find(K)
+
+  /**
+   * Determine if the hash table contains a particular key.
+   */
+  public boolean containsKey(JSONString key) {
+    try {
+      get(key);
+      return true;
+    } catch (Exception e) {
+      return false;
+    } // try/catch
+  } // containsKey(K)
 
 } // class JSONHash
