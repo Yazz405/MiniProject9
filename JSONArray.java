@@ -5,7 +5,7 @@ import java.util.Iterator;
 /**
  * JSON arrays.
  */
-public class JSONArray {
+public class JSONArray implements JSONValue{
 
   // +--------+------------------------------------------------------
   // | Fields |
@@ -35,21 +35,30 @@ public class JSONArray {
    * Convert to a string (e.g., for printing).
    */
   public String toString() {
-    return "";          // STUB
+    String result = "";
+
+    result += " " + this.get(0).toString();
+    for (int i = 1; i < this.values.size(); i++) {
+      result += ", " +this.get(i).toString();
+    }// for
+
+    return "[" + result + "]";
   } // toString()
 
   /**
    * Compare to another object.
    */
   public boolean equals(Object other) {
-    return true;        // STUB
+    return ( ( (other instanceof JSONArray) 
+               && (this.values.equals(((JSONArray) other).values)) )
+             || (this.values.equals(other)) );
   } // equals(Object)
 
   /**
    * Compute the hash code.
    */
   public int hashCode() {
-    return 0;           // STUB
+    return this.values.hashCode();
   } // hashCode()
 
   // +--------------------+------------------------------------------
@@ -60,7 +69,7 @@ public class JSONArray {
    * Write the value as JSON.
    */
   public void writeJSON(PrintWriter pen) {
-                        // STUB
+    pen.println(this.toString());
   } // writeJSON(PrintWriter)
 
   /**

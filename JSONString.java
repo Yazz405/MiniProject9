@@ -3,7 +3,7 @@ import java.io.PrintWriter;
 /**
  * JSON strings.
  */
-public class JSONString {
+public class JSONString implements JSONValue{
 
   // +--------+------------------------------------------------------
   // | Fields |
@@ -33,21 +33,23 @@ public class JSONString {
    * Convert to a string (e.g., for printing).
    */
   public String toString() {
-    return this.value;          // STUB
+    return "\"" + this.value + "\"";
   } // toString()
 
   /**
    * Compare to another object.
    */
   public boolean equals(Object other) {
-    return true;        // STUB
+    return ( ( (other instanceof JSONString) 
+               && (this.value.equals(((JSONString) other).value)) )
+             || (this.value.equals(other)) );
   } // equals(Object)
 
   /**
    * Compute the hash code.
    */
   public int hashCode() {
-    return 0;           // STUB
+    return this.value.hashCode();
   } // hashCode()
 
   // +--------------------+------------------------------------------
@@ -58,7 +60,7 @@ public class JSONString {
    * Write the value as JSON.
    */
   public void writeJSON(PrintWriter pen) {
-    pen.println("\"" + this.value + "\"");
+    pen.println(this.toString());
   } // writeJSON(PrintWriter)
 
   /**
