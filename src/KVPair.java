@@ -8,6 +8,8 @@ public class KVPair<K, V> {
   // | Fields |
   // +--------+
 
+  protected final String next = null;
+
   /**
    * The key. May not be null.
    */

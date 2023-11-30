@@ -1,7 +1,9 @@
 package src;
+
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Random;
 
 /**
@@ -107,7 +109,8 @@ public class JSONHash implements JSONValue {
     int index = find(key);
 
     @SuppressWarnings("unchecked")
-    ArrayList<KVPair<JSONString, JSONValue>> alist = (ArrayList<KVPair<JSONString, JSONValue>>) buckets[index];
+    ArrayList<KVPair<JSONString, JSONValue>> alist =
+        (ArrayList<KVPair<JSONString, JSONValue>>) buckets[index];
     if (alist == null) {
       throw new IndexOutOfBoundsException("Invalid key: " + key);
     } else {
@@ -132,15 +135,56 @@ public class JSONHash implements JSONValue {
    */
   public Iterator<KVPair<JSONString, JSONValue>> iterator() {
     return new Iterator<KVPair<JSONString, JSONValue>>() {
+
+      int outerBucket = 0;
+      int innerBucket = 0;
+
+      @SuppressWarnings("unchecked")
       public boolean hasNext() {
-        // STUB
+        if (buckets == null || size == 0) {
+          return false;
+        } // if
+
+        if (innerBucket >= outerBucket) {
+          for (int i = 0; i < buckets.length; i++) {
+            ArrayList<KVPair<JSONString, JSONValue>> alist =
+                (ArrayList<KVPair<JSONString, JSONValue>>) buckets[i];
+
+            if (alist == null) {
+              outerBucket++;
+              continue;
+            } else {
+              innerBucket = 0;
+              for (int j = 0; j < alist.size(); j++) {
+                if (alist.get(j) == null) {
+                  continue;
+                } else {
+                  return true;
+                } // if... else
+              } // for
+
+            } // if... else
+
+          } // for
+        } else if (innerBucket < outerBucket) {
+          return true;
+        } // if... else if
+
         return false;
       } // hasNext()
 
+      @SuppressWarnings("unchecked")
       public KVPair<JSONString, JSONValue> next() {
-        // STUB
-        return null;
+        if (this.hasNext()) {
+          ArrayList<KVPair<JSONString, JSONValue>> alist =
+              (ArrayList<KVPair<JSONString, JSONValue>>) buckets[outerBucket];
+
+          return (KVPair<JSONString, JSONValue>) alist.get(innerBucket);
+        } else {
+          throw new NoSuchElementException();
+        }
       } // next()
+
     }; // new Iterator
   } // iterator()
 
@@ -156,7 +200,8 @@ public class JSONHash implements JSONValue {
     // Find out where the key belongs and put the pair there.
     int index = find(key);
     @SuppressWarnings("unchecked")
-    ArrayList<KVPair<JSONString, JSONValue>> alist = (ArrayList<KVPair<JSONString, JSONValue>>) buckets[index];
+    ArrayList<KVPair<JSONString, JSONValue>> alist =
+        (ArrayList<KVPair<JSONString, JSONValue>>) buckets[index];
     // Special case: Nothing there yet
     if (alist == null) {
       alist = new ArrayList<KVPair<JSONString, JSONValue>>();
@@ -196,8 +241,8 @@ public class JSONHash implements JSONValue {
   }// expand()
 
   /**
-   * Find the index of the entry with a given key. If there is no such entry,
-   * return the index of an entry we can use to store that key.
+   * Find the index of the entry with a given key. If there is no such entry, return the index of an
+   * entry we can use to store that key.
    */
   int find(JSONString key) {
     return Math.abs(key.hashCode()) % this.buckets.length;
@@ -214,5 +259,28 @@ public class JSONHash implements JSONValue {
       return false;
     } // try/catch
   } // containsKey(K)
+
+  public static void main(String[] args) {
+    JSONHash test = new JSONHash();
+
+    JSONString hello = new JSONString("hello");
+    JSONString world = new JSONString("world");
+    JSONString please = new JSONString("please");
+    JSONString work = new JSONString("work");
+
+    test.set(hello, world);
+    test.set(please, work);
+    JSONValue result = test.get(please);
+    System.out.println(result);
+
+    Iterator<KVPair<JSONString, JSONValue>> result2 = test.getValue();
+
+    int result3 = test.size;
+    System.out.println(result3);
+
+    System.out.println(result2.next());
+    System.out.println(result2.next());
+
+  }
 
 } // class JSONHash
