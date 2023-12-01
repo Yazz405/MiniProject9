@@ -1,6 +1,7 @@
 package src;
 
 import java.io.PrintWriter;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -145,29 +146,39 @@ public class JSONHash implements JSONValue {
           return false;
         } // if
 
-        if (innerBucket >= outerBucket) {
-          for (int i = 0; i < buckets.length; i++) {
-            ArrayList<KVPair<JSONString, JSONValue>> alist =
+        ArrayList<KVPair<JSONString, JSONValue>> alist =
+            (ArrayList<KVPair<JSONString, JSONValue>>) buckets[outerBucket];
+
+        while (alist == null) {
+          alist = (ArrayList<KVPair<JSONString, JSONValue>>) buckets[outerBucket++];
+
+          if (alist != null) {
+            outerBucket--;
+          } // if
+        } // while
+
+        if (outerBucket >= buckets.length) {
+          return false;
+        } // if
+
+        if (innerBucket < alist.size()) {
+          if (alist.get(innerBucket) != null) {
+            return true;
+          } // if
+        } else if (innerBucket >= alist.size()) {
+          innerBucket = 0;
+
+          for (int i = outerBucket; i < buckets.length; i++) {
+            ArrayList<KVPair<JSONString, JSONValue>> temp =
                 (ArrayList<KVPair<JSONString, JSONValue>>) buckets[i];
 
-            if (alist == null) {
-              outerBucket++;
-              continue;
-            } else {
-              innerBucket = 0;
-              for (int j = 0; j < alist.size(); j++) {
-                if (alist.get(j) == null) {
-                  continue;
-                } else {
-                  return true;
-                } // if... else
-              } // for
-
-            } // if... else
-
+            if (temp != null && !(temp.equals(alist))) {
+              outerBucket = i;
+              alist = temp;
+              return true;
+            } // if
           } // for
-        } else if (innerBucket < outerBucket) {
-          return true;
+
         } // if... else if
 
         return false;
@@ -177,12 +188,12 @@ public class JSONHash implements JSONValue {
       public KVPair<JSONString, JSONValue> next() {
         if (this.hasNext()) {
           ArrayList<KVPair<JSONString, JSONValue>> alist =
-              (ArrayList<KVPair<JSONString, JSONValue>>) buckets[outerBucket];
+              (ArrayList<KVPair<JSONString, JSONValue>>) buckets[outerBucket--];
 
-          return (KVPair<JSONString, JSONValue>) alist.get(innerBucket);
+          return (KVPair<JSONString, JSONValue>) alist.get(innerBucket++);
         } else {
           throw new NoSuchElementException();
-        }
+        } // if... else
       } // next()
 
     }; // new Iterator
@@ -263,23 +274,34 @@ public class JSONHash implements JSONValue {
   public static void main(String[] args) {
     JSONHash test = new JSONHash();
 
-    JSONString hello = new JSONString("hello");
-    JSONString world = new JSONString("world");
+
     JSONString please = new JSONString("please");
     JSONString work = new JSONString("work");
+    JSONString minecraft = new JSONString("minecraft");
+    JSONString game = new JSONString("2048");
+    JSONString a = new JSONString("a");
+    JSONString b = new JSONString("b");
+    JSONString hello = new JSONString("hello");
+    JSONString world = new JSONString("world");
 
-    test.set(hello, world);
     test.set(please, work);
-    JSONValue result = test.get(please);
-    System.out.println(result);
-
     Iterator<KVPair<JSONString, JSONValue>> result2 = test.getValue();
 
-    int result3 = test.size;
-    System.out.println(result3);
+
+    test.set(minecraft, game);
+    test.set(a, b);
+    test.set(hello, world);
+    test.set(minecraft, game);
+
+
 
     System.out.println(result2.next());
     System.out.println(result2.next());
+    System.out.println(result2.next());
+    System.out.println(result2.next());
+    System.out.println(result2.hasNext());
+
+
 
   }
 
