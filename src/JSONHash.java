@@ -63,6 +63,14 @@ public class JSONHash implements JSONValue {
   public String toString() {
     String result = "";
 
+    for (Object temp : this.buckets) {
+      if (temp == null) {
+        continue;
+      } else {
+        result += temp.toString();
+      } // if... else
+    }
+
     return "{" + result + "}"; // STUB
   } // toString()
 
@@ -70,8 +78,26 @@ public class JSONHash implements JSONValue {
    * Compare to another object.
    */
   public boolean equals(Object other) {
+    if (this == other) {
+      return true;
+    } // if
 
-    return true; // STUB
+    JSONHash newOther = (JSONHash) other;
+
+    if (this.size != newOther.size) {
+      return false;
+    } // if
+
+    Iterator<KVPair<JSONString, JSONValue>> firsIterator = this.getValue();
+    Iterator<KVPair<JSONString, JSONValue>> secIterator = newOther.getValue();
+
+    while (firsIterator.hasNext() && secIterator.hasNext()) {
+      if (!(firsIterator.next().equals(secIterator.next()))) {
+        return false;
+      } // if
+    } // while
+    
+    return true;
   } // equals(Object)
 
   /**
@@ -275,39 +301,4 @@ public class JSONHash implements JSONValue {
       return false;
     } // try/catch
   } // containsKey(K)
-
-  public static void main(String[] args) {
-    JSONHash test = new JSONHash();
-
-
-    JSONString please = new JSONString("please");
-    JSONString work = new JSONString("work");
-    JSONString minecraft = new JSONString("minecraft");
-    JSONString game = new JSONString("2048");
-    JSONString a = new JSONString("a");
-    JSONString b = new JSONString("b");
-    JSONString hello = new JSONString("hello");
-    JSONString world = new JSONString("world");
-
-    test.set(please, work);
-    Iterator<KVPair<JSONString, JSONValue>> result2 = test.getValue();
-
-
-    test.set(minecraft, game);
-    test.set(a, b);
-    test.set(hello, world);
-    test.set(minecraft, game);
-
-
-
-    System.out.println(result2.next());
-    System.out.println(result2.next());
-    System.out.println(result2.next());
-    System.out.println(result2.next());
-    System.out.println(result2.hasNext());
-
-
-
-  }
-
 } // class JSONHash
