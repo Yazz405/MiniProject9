@@ -248,8 +248,13 @@ public class JSONHash implements JSONValue {
    * Expand the size of the table.
    */
   void expand() {
+    // Figure out the size of the new table
+    int newSize = 2 * this.buckets.length + rand.nextInt(10);
+    Object[] newBuckets = new Object[newSize];
+    newBuckets = this.buckets.clone();
 
-  }// expand()
+    this.buckets = newBuckets;
+  } // expand()
 
   /**
    * Find the index of the entry with a given key. If there is no such entry, return the index of an
