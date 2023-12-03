@@ -1,7 +1,8 @@
 Mini-Project 8: JSON
 ====================
 
-A simple JSON parser.
+This project parses JSON hashes, arrays, constants, ints, reals, and strings. This can
+be done by creating a main and inputting a TXT file with JSON into parse.
 
 Implemented by Joshua De La Rosa and Alma Ordaz for CSC-207-01 2023Fa.
 

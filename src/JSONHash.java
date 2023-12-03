@@ -9,6 +9,8 @@ import java.util.Random;
 
 /**
  * JSON hashes/objects.
+ * @author: Alma Ordaz, Joshua Delarosa, Sam Rebelsky
+ * 
  */
 public class JSONHash implements JSONValue {
 
@@ -51,7 +53,7 @@ public class JSONHash implements JSONValue {
     this.rand = new Random();
     this.buckets = new Object[41];
     this.size = 0;
-  } // ChainedHashTable
+  } // JSONHash()
 
   // +-------------------------+-------------------------------------
   // | Standard object methods |
@@ -69,9 +71,9 @@ public class JSONHash implements JSONValue {
       } else {
         result += temp.toString();
       } // if... else
-    }
+    } // for
 
-    return "{" + result + "}"; // STUB
+    return "{" + result + "}";
   } // toString()
 
   /**
@@ -96,7 +98,7 @@ public class JSONHash implements JSONValue {
         return false;
       } // if
     } // while
-    
+
     return true;
   } // equals(Object)
 

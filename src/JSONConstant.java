@@ -3,6 +3,8 @@ import java.io.PrintWriter;
 
 /**
  * JSON constants.
+ * @author: Alma Ordaz, Joshua Delarosa, Sam Rebelsky
+ * 
  */
 public class JSONConstant implements JSONValue{
 

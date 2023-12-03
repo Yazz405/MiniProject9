@@ -8,6 +8,9 @@ import java.text.ParseException;
 
 /**
  * Utilities for our simple implementation of JSON.
+ * 
+ * @author: Alma Ordaz, Joshua Delarosa, Sam Rebelsky
+ * 
  */
 public class JSON {
   // +---------------+-----------------------------------------------
@@ -105,7 +108,7 @@ public class JSON {
     }
 
     throw new ParseException("Could not parse", pos);
-  } // parseKernel
+  } // parseKernel(Reader source)
 
   /**
    * Get the next character from source, skipping over whitespace.
@@ -126,6 +129,13 @@ public class JSON {
     return (' ' == ch) || ('\n' == ch) || ('\r' == ch) || ('\t' == ch);
   } // isWhiteSpace(int)
 
+  // +---------------------+-----------------------------------------
+  // | parseKernel Helpers |
+  // +---------------------+
+
+  /**
+   * A helper for parsing strings in JSON.
+   */
   static JSONString stringParser(Reader source, int ch) throws IOException {
     String result = "";
     result += (char) ch;
@@ -139,6 +149,9 @@ public class JSON {
     return new JSONString(result.substring(1, result.length() - 1));
   } // stringParser(Reader source, int ch)
 
+  /**
+   * A helper for parsing array in JSON.
+   */
   static void arrayParser(Reader source, int ch, JSONArray arr) throws IOException {
 
     while (ch != ']') {
@@ -146,7 +159,7 @@ public class JSON {
 
       if (ch == ',' || isWhitespace(ch)) {
         continue;
-      }
+      } // if
 
       if (ch == '"') {
         JSONString resString = stringParser(source, ch);
@@ -168,10 +181,11 @@ public class JSON {
         } else {
           JSONInteger num = new JSONInteger(numResult.substring(0, numResult.length() - 1));
           arr.add(num);
-        }
+        } // if... else
+
         if (numResult.charAt(numResult.length() - 1) == ']') {
           break;
-        }
+        } // if
       } else if ((ch == 't' || ch == 'f' || ch == 'n')) {
         String constantRes = constantParser(source, ch);
         if (constantRes.contains("true")) {
@@ -182,17 +196,20 @@ public class JSON {
           arr.add(JSONConstant.NULL);
         } else {
           throw new IOException("Could not parse: " + ch);
-        }
+        } // if... else if... else
 
         if (constantRes.charAt(constantRes.length() - 1) == ']') {
           break;
-        }
-      }
+        } // if
+      } // if... else if...
 
       ++pos;
-    }
+    } // while
   } // arrayParser(Reader source, int ch, JSONArray arr) throws IOException
 
+  /**
+   * A helper for parsing hashes in JSON.
+   */
   static void hashParser(Reader source, int ch, JSONHash hash) throws IOException {
     String result = "";
     JSONString[] keys = new JSONString[size];
@@ -203,7 +220,7 @@ public class JSON {
 
       if (isWhitespace(ch) || ch == ',') {
         continue;
-      }
+      } // if
 
       result += (char) ch;
 
@@ -214,7 +231,7 @@ public class JSON {
 
         while (isWhitespace(ch)) {
           ch = source.read();
-        }
+        } // while
 
         if (ch == '"') {
           JSONString resString = stringParser(source, ch);
@@ -236,10 +253,11 @@ public class JSON {
           } else {
             JSONInteger num = new JSONInteger(numResult.substring(0, numResult.length() - 1));
             hash.set(keys[i], num);
-          }
+          } // if... else
+
           if (numResult.charAt(numResult.length() - 1) == '}') {
             break;
-          }
+          } // if
         } else if (ch == 't' || ch == 'f' || ch == 'n') {
           String constantRes = constantParser(source, ch);
           if (constantRes.contains("true")) {
@@ -250,23 +268,26 @@ public class JSON {
             hash.set(keys[i], JSONConstant.NULL);
           } else {
             throw new IOException("Could not parse: " + ch);
-          }
+          } // if... else if... else
 
           if (constantRes.charAt(constantRes.length() - 1) == '}') {
             break;
-          }
-        }
+          } // if
+        } // if... else if...
 
         ++pos;
         i++;
         result = "";
-      }
+      } // if
 
       ++pos;
-    } while (ch != '}');
+    } while (ch != '}'); // do... while()
 
   } // hashParser(Reader source, int ch, JSONHash hash) throws IOException
 
+  /**
+   * A helper for parsing numbers in JSON.
+   */
   static String numParser(Reader source, int ch) throws IOException {
     String result = "";
 
@@ -276,12 +297,15 @@ public class JSON {
 
       ++pos;
     } while (Character.isDigit((char) ch) || ch == 'E' || ch == '.' || ch == '+' || ch == '-');
+    // do... while()
 
     result += (char) ch;
-
     return result;
   } // numParser(Reader source, int ch)
 
+  /**
+   * A helper for parsing constants in JSON.
+   */
   static String constantParser(Reader source, int ch) throws IOException {
     String result = "";
     result += (char) ch;
@@ -290,43 +314,10 @@ public class JSON {
       ch = source.read();
       result += (char) ch;
     } while (Character.isAlphabetic(ch));
+    // do... while()
 
     result = result.substring(0);
     result = result.toLowerCase();
-
     return result;
   } // constantParser(Reader source, int ch) throws IOException
-
-  public static void main(String[] args) throws ParseException, IOException {
-    JSONValue result = JSON.parseFile("JSONEx.txt");
-
-    System.out.println(result);
-  }
-}
-// class JSON
-
-/*
- * static JSONValue kernalHelper(Reader source, int ch, JSONArray arr, JSONHash hash) throws
- * IOException{ if (ch == '"') { return stringParser(source, ch); } else if (ch == '[') { JSONArray
- * arrNew = new JSONArray(); arrayParser(source, ch, arr); return arr; } else if (ch == '{') {
- * JSONHash hashNew = new JSONHash(); hashParser(source, ch, hash); return hash; } else if (ch ==
- * '-' || Character.isDigit(ch)) {
- * 
- * } }
- */
-
-/*
- * switch (ch) { case '"': JSONString resString = stringParser(source, ch); arr.add(resString);
- * break;
- * 
- * case '[': JSONArray arrNew = new JSONArray(); arrayParser(source, ch, arrNew); arr.add(arrNew);
- * break; case '{': JSONHash newHash = new JSONHash(); hashParser(source, ch, newHash);
- * arr.add(newHash); break; }
- */
-
-/*
- * switch (ch) { case '"': JSONString resString = stringParser(source, ch); hash.set(keys[i],
- * resString); break; case '[': JSONArray arr = new JSONArray(); arrayParser(source, ch, arr);
- * hash.set(keys[i], arr); break; case '{': JSONHash newHash = new JSONHash(); hashParser(source,
- * ch, newHash); hash.set(keys[i], newHash); break; }
- */
+} // class JSON
