@@ -38,7 +38,7 @@ public class JSONArray implements JSONValue{
   public String toString() {
     String result = "";
 
-    result += " " + this.get(0).toString();
+    result += "" + this.get(0).toString();
     for (int i = 1; i < this.values.size(); i++) {
       result += ", " +this.get(i).toString();
     }// for
