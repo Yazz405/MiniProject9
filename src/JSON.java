@@ -72,7 +72,7 @@ public class JSON {
     ch = skipWhitespace(source);
     if (-1 == ch) {
       throw new ParseException("Unexpected end of file", pos);
-    }
+    } // if
 
     if (ch == '"') {
       return stringParser(source, ch);
@@ -93,7 +93,7 @@ public class JSON {
       } else {
         JSONInteger num = new JSONInteger(numResult.substring(0, numResult.length() - 1));
         return num;
-      }
+      } // if... else
     } else if (ch == 't' || ch == 'f' || ch == 'n') {
       String constantRes = constantParser(source, ch);
       if (constantRes.contains("true")) {
@@ -104,8 +104,8 @@ public class JSON {
         return JSONConstant.NULL;
       } else {
         throw new IOException("Could not parse: " + ch);
-      }
-    }
+      } // if... else if... else
+    } // if... else if
 
     throw new ParseException("Could not parse", pos);
   } // parseKernel(Reader source)
